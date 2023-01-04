@@ -1,5 +1,5 @@
 const dotenv = require("dotenv").config();
-const express =require("express");
+const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -10,45 +10,41 @@ const errorHandler = require("./middleWare/errorMiddleware");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
-/// inntialize express frame work
 const app = express();
 
-
-//middleware
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: ["https://inventory-ims.netlify.app"],
+    origin: ["http://localhost:3000"],
     credentials: true,
   })
 );
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-//Route Middleware
+// Routes Middleware
 app.use("/api/users", userRoute);
 app.use("/api/products", productRoute);
-app.use("/api/contactus", contactRoute)
+app.use("/api/contactus", contactRoute);
 
-//Routes
-app.get("/",(req,res)=>{
-  res.send("Home Page")
+// Routes
+app.get("/", (req, res) => {
+  res.send("Home Page");
 });
 
-// connecting to server
-const PORT = process.env.PORT || 5000;
-// Error Handler
+// Error Middleware
 app.use(errorHandler);
-//connect to Database MONGO and start server
-
+// Connect to DB and start server
+const PORT = process.env.PORT || 5000;
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(()=>{
-    app.listen(PORT,() => {
-      console.log(`Server Running on port: ${PORT}`)
-    })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server Running on port ${PORT}`);
+    });
   })
-  .catch((err)=> console.log(err))
-
+  .catch((err) => console.log(err));
